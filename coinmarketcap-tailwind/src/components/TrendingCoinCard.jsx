@@ -167,7 +167,7 @@ const CryptoTrending = () => {
                       {coin.item.name}
                     </span>
                   </div>
-                  <div className=" flex justify-between w-1/2 xl:w-3/7 2xl:w-4/11">
+                  <div className=" flex justify-between min-w-1/2">
                     <span className="mr-5  lg:mr-0 2xl:mr-2">
                       ${price.toFixed(3)}
                     </span>
@@ -224,7 +224,7 @@ const CryptoTrending = () => {
                       {coin.item.name}
                     </span>
                   </div>
-                  <div className="flex justify-between w-1/2  xl:w-3/7 2xl:w-4/11">
+                  <div className="flex justify-between min-w-1/2  ">
                     <span className="mr-5 text-left  lg:mr-0 2xl:mr-2">
                       ${price.toFixed(3)}
                     </span>
