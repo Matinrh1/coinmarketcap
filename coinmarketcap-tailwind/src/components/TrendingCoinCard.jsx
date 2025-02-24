@@ -262,7 +262,7 @@ const CryptoTrending = () => {
         </div>
 
         {/* Market Data */}
-        <div className="grid  grid-cols-2 gap-4 pl-4">
+        <div className="grid  grid-cols-2 gap-4 ">
           <div className="bg-[#222531] p-4 pb-0 rounded-xl text-center">
             <h5 className="text-lg font-bold">Market Cap</h5>
             <p className="text-xl font-bold">
@@ -292,7 +292,7 @@ const CryptoTrending = () => {
             )}
           </div>
 
-          <div className="bg-[#222531] p-4 pb-0 rounded-xl text-center">
+          <div className="bg-[#222531] p-4 lg:pb-0 rounded-xl text-center">
             <h5 className="text-lg font-bold">CMC100</h5>
             <p className="text-xl font-bold">
               {marketData.market_cap_percentage?.btc
