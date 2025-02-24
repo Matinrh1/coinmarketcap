@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 
-  const CryptoTrending = () => {
+const CryptoTrending = () => {
   const [trendingCoins, setTrendingCoins] = useState([]);
   const [trendingdexscan, setTrendingDexscan] = useState([]);
   const [marketData, setMarketData] = useState(null);
@@ -105,6 +105,7 @@ import axios from "axios";
   if (loading) return <p className="text-white">Loading market data...</p>;
   if (!marketData) return <p className="text-white">Error loading market data.</p>;
 
+
   const getGaugeColor = (value) => {
     if (value <= 25) return "#FF4D4F"; // Extreme Fear (Red)
     if (value <= 45) return "#FFA500"; // Fear (Orange)
@@ -184,12 +185,12 @@ import axios from "axios";
                       alt={coin.item.name}
                       className="w-5 h-5 mx-2"
                     />
-                    <span className="text-sm  xl:text-base">
+                    <span className="text-sm lg:min-w-fit xl:text-base">
                       {coin.item.name}
                     </span>
                   </div>
-                  <div className=" flex justify-between min-w-1/2">
-                    <span className="mr-5  lg:mr-0 2xl:mr-2">
+                  <div className=" flex justify-between min-w-fit w-1/2 xl:w-3/7 2xl:w-4/11">
+                    <span className="mr-5 lg:ml-3 xl:ml-0 lg:mr-0 2xl:mr-2">
                       ${price.toFixed(3)}
                     </span>
                     <span className={priceChangeClass}>
@@ -241,12 +242,12 @@ import axios from "axios";
                       alt={coin.item.name}
                       className="w-5 h-5 mx-2"
                     />
-                    <span className="text-sm xl:text-base">
+                    <span className="text-sm lg:min-w-fit xl:text-base">
                       {coin.item.name}
                     </span>
                   </div>
-                  <div className="flex justify-between min-w-1/2  ">
-                    <span className="mr-5 text-left  lg:mr-0 2xl:mr-2">
+                  <div className="flex justify-between min-w-fit w-1/2 xl:w-3/7 2xl:w-4/11 ">
+                    <span className="mr-5 lg:ml-3 xl:ml-0 lg:mr-0 2xl:mr-2">
                       ${price.toFixed(3)}
                     </span>
                     <span className={priceChangeClass}>
@@ -261,7 +262,7 @@ import axios from "axios";
         </div>
 
         {/* Market Data */}
-        <div className="grid  grid-cols-2 gap-4 ">
+        <div className="grid  grid-cols-2 gap-4 pl-4">
           <div className="bg-[#222531] p-4 rounded-xl text-center">
             <h5 className="text-lg font-bold">Market Cap</h5>
             <p className="text-xl font-bold">
