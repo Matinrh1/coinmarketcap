@@ -1,13 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 
-const CryptoTrending = () => {
-  const [trendingCoins, setTrendingCoins] = useState([]);
-  const [trendingdexscan, setdexscantrending] = useState([]);
-  const [marketData, setMarketData] = useState({});
-  const [fearGreedData, setFearGreedData] = useState(null);
-  const [loading, setLoading] = useState(true);
-
   const CryptoTrending = () => {
   const [trendingCoins, setTrendingCoins] = useState([]);
   const [trendingdexscan, setTrendingDexscan] = useState([]);
