@@ -1,16 +1,32 @@
-import React, { useEffect, useState } from "react";
-
 export default function MarketStats() {
   const [marketData, setMarketData] = useState(null);
+  const CACHE_KEY = "marketData";
+  const CACHE_TIME_KEY = "marketDataTimestamp";
+  const CACHE_DURATION = 1 * 60 * 1000; // 1 minutes in milliseconds
 
   useEffect(() => {
     const fetchMarketData = async () => {
+      const storedData = localStorage.getItem(CACHE_KEY);
+      const storedTimestamp = localStorage.getItem(CACHE_TIME_KEY);
+
+      if (storedData && storedTimestamp && Date.now() - storedTimestamp < CACHE_DURATION) {
+        setMarketData(JSON.parse(storedData)); // Use cached data
+        return;
+      }
+
       try {
         const response = await fetch("https://api.coingecko.com/api/v3/global");
         const data = await response.json();
         setMarketData(data.data);
+
+        // Save data to localStorage
+        localStorage.setItem(CACHE_KEY, JSON.stringify(data.data));
+        localStorage.setItem(CACHE_TIME_KEY, Date.now());
       } catch (error) {
         console.error("Error fetching market data:", error);
+        if (storedData) {
+          setMarketData(JSON.parse(storedData)); // Fallback to cached data
+        }
       }
     };
 
@@ -34,7 +50,7 @@ export default function MarketStats() {
   } = marketData;
 
   const btcDominance = market_cap_percentage.btc.toFixed(1);
-  const volumeChangePercentage = total_volume.usd_24h_change; // Corrected value
+  const volumeChangePercentage = total_volume.usd_24h_change;
 
   return (
     <div className="bg-gray-900 text-white p-3 border-b">
