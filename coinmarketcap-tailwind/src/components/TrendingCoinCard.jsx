@@ -74,7 +74,7 @@ import axios from "axios";
     }
   };
 
-  if (loading) return <p>Loading market data...</p>;
+  if (loading) return <p claasName="text-white">Loading market data...</p>;
   if (!marketData) return <p>Error loading market data.</p>;
 
   const getGaugeColor = (value) => {
