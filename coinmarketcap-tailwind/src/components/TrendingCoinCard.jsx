@@ -8,32 +8,37 @@ const CryptoTrending = () => {
   const [fearGreedData, setFearGreedData] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    fetchTrendingCoins();
-    fetchMarketData();
-    fetchTrendingDexscan();
-    fetchFearGreedIndex();
+  const CryptoTrending = () => {
+  const [trendingCoins, setTrendingCoins] = useState([]);
+  const [trendingdexscan, setTrendingDexscan] = useState([]);
+  const [marketData, setMarketData] = useState(null);
+  const [fearGreedData, setFearGreedData] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-    const interval = setInterval(() => {
-      fetchTrendingCoins();
-      fetchMarketData();
-      fetchTrendingDexscan();
-      fetchFearGreedIndex();
-    }, 60000); // Fetch every 60 seconds
-  
+  useEffect(() => {
+    fetchAllData();
+    const interval = setInterval(fetchAllData, 60000); // Fetch every 60 seconds
+
     return () => clearInterval(interval);
   }, []);
+
+  const fetchAllData = async () => {
+    await fetchTrendingCoins();
+    await fetchMarketData();
+    await fetchTrendingDexscan();
+    await fetchFearGreedIndex();
+  };
 
   const fetchFearGreedIndex = async () => {
     try {
       const response = await axios.get("https://api.alternative.me/fng/");
       setFearGreedData(response.data.data[0]); // Latest index value
     } catch (error) {
-      console.error("Error fetching Fear & Greed Index:", error);
+      console.error("❌ Error fetching Fear & Greed Index:", error.message);
     }
   };
 
-  const fetchTrendingCoins = async () => {
+  const fetchTrendingCoins = async (retryDelay = 30000) => {
     try {
       const response = await axios.get(
         "https://api.coingecko.com/api/v3/search/trending",
@@ -41,46 +46,44 @@ const CryptoTrending = () => {
       );
       setTrendingCoins(response.data.coins.slice(0, 5));
     } catch (error) {
-      console.error("Error fetching trending coins:", error);
+      console.error("❌ Error fetching trending coins:", error.message);
       if (error.response?.status === 429) {
-        setTimeout(fetchTrendingCoins, 30000);
+        console.warn(`⚠️ Rate limit hit! Retrying in ${retryDelay / 1000} seconds...`);
+        setTimeout(() => fetchTrendingCoins(retryDelay * 2), retryDelay); // Exponential backoff
       }
     }
   };
-  const fetchTrendingDexscan = async () => {
+
+  const fetchTrendingDexscan = async (retryDelay = 30000) => {
     try {
       const response = await axios.get(
         "https://api.coingecko.com/api/v3/search/trending",
         { headers: { "Cache-Control": "no-cache" } }
       );
-      setdexscantrending(response.data.coins.slice(6, 11));
+      setTrendingDexscan(response.data.coins.slice(6, 11));
     } catch (error) {
-      console.error("Error fetching trending coins:", error);
+      console.error("❌ Error fetching trending dexscan:", error.message);
       if (error.response?.status === 429) {
-        setTimeout(fetchTrendingDexscan, 30000);
+        console.warn(`⚠️ Rate limit hit! Retrying in ${retryDelay / 1000} seconds...`);
+        setTimeout(() => fetchTrendingDexscan(retryDelay * 2), retryDelay);
       }
     }
   };
 
   const fetchMarketData = async () => {
     try {
-      const response = await axios.get(
-        "https://api.coingecko.com/api/v3/global"
-      );
+      const response = await axios.get("https://api.coingecko.com/api/v3/global");
       setMarketData(response.data.data);
-      setLoading(false);
     } catch (error) {
-      console.error("Error fetching market data:", error);
+      console.error("❌ Error fetching market data:", error.message);
+    } finally {
       setLoading(false);
     }
   };
-  if (loading) {
-    return <p>Loading market data...</p>;
-  }
 
-  if (!marketData) {
-    return <p>Error loading market data.</p>;
-  }
+  if (loading) return <p>Loading market data...</p>;
+  if (!marketData) return <p>Error loading market data.</p>;
+
   const getGaugeColor = (value) => {
     if (value <= 25) return "#FF4D4F"; // Extreme Fear (Red)
     if (value <= 45) return "#FFA500"; // Fear (Orange)
@@ -88,6 +91,7 @@ const CryptoTrending = () => {
     if (value <= 75) return "#7CFC00"; // Greed (Light Green)
     return "#00C853"; // Extreme Greed (Dark Green)
   };
+
 
   return (
     <div className="container mx-auto  text-white  my-6 px-4 xl:px-20 ">
