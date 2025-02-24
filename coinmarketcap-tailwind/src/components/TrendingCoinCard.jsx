@@ -233,7 +233,7 @@ import axios from "axios";
         </div>
 
         {/* Market Data */}
-        <div className="grid  grid-cols-2 gap-4 pl-4">
+        <div className="grid  grid-cols-2 gap-4 ">
           <div className="bg-[#222531] p-4 rounded-xl text-center">
             <h5 className="text-lg font-bold">Market Cap</h5>
             <p className="text-xl font-bold">
