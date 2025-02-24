@@ -4,20 +4,20 @@ import LineChart from "../assets/LineChart";
 export default function CryptoTable() {
   const [cryptoData, setCryptoData] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [pageDataCache, setPageDataCache] = useState({});
+
+  useEffect(() => {
+    const storedData = localStorage.getItem("cryptoDataPage" + currentPage);
+    if (storedData) {
+      setCryptoData(JSON.parse(storedData));
+    } else {
+      fetchCryptoData(currentPage);
+    }
+  }, [currentPage]);
 
   const fetchCryptoData = (page) => {
-    // Check if data for this page is already cached
-    if (pageDataCache[page]) {
-      setCryptoData(pageDataCache[page]);
-      return;
-    }
-
-    // Fetch data if it's not cached
     fetch(
       `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=10&page=${page}&sparkline=true&price_change_percentage=1h,24h,7d`
     )
-    
       .then((response) => {
         if (!response.ok) {
           throw new Error(`Error: ${response.statusText}`);
@@ -26,31 +26,12 @@ export default function CryptoTable() {
       })
       .then((data) => {
         setCryptoData(data);
-
-        // Cache the data for future use
-        setPageDataCache((prevCache) => ({
-          ...prevCache,
-          [page]: data,
-        }));
+        localStorage.setItem("cryptoDataPage" + page, JSON.stringify(data));
       })
       .catch((error) => console.error("Error fetching data:", error));
   };
 
-  useEffect(() => {
-    fetchCryptoData(currentPage);
-
-    const interval = setInterval(() => {
-      fetchCryptoData(currentPage);
-    }, 60000);
-
-    return () => clearInterval(interval);
-  }, [currentPage]);
-
   const handlePageChange = (pageNumber) => {
-    // If the requested page data is already cached, we don't need to fetch it again
-    if (pageDataCache[pageNumber]) {
-      setCryptoData(pageDataCache[pageNumber]);
-    }
     setCurrentPage(pageNumber);
   };
 
