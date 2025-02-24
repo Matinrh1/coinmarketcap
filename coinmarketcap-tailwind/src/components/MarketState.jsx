@@ -1,3 +1,5 @@
+import React, { useEffect, useState } from "react";
+
 export default function MarketStats() {
   const [marketData, setMarketData] = useState(null);
   const CACHE_KEY = "marketData";
@@ -78,8 +80,6 @@ export default function MarketStats() {
           <div>
             <span className="text-gray-400">24h Volume:</span>
             <span className="ml-1 text-yellow-500">${(total_volume.usd / 1e9).toFixed(1)}B</span>
-            <span className={`mx-2 ${volumeChangePercentage < 0 ? "text-red-500" : "text-green-500"}`}> 
-            </span>
           </div>
 
           <div>
