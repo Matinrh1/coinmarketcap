@@ -9,23 +9,54 @@ import axios from "axios";
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchAllData();
+    loadCachedData(); // Load cached data on mount
+    fetchAllDataIfNeeded(); // Fetch if cache is expired
     const interval = setInterval(fetchAllData, 60000); // Fetch every 60 seconds
 
     return () => clearInterval(interval);
   }, []);
+
+  const loadCachedData = () => {
+    const cachedTrendingCoins = localStorage.getItem("trendingCoins");
+    const cachedTrendingDexscan = localStorage.getItem("trendingDexscan");
+    const cachedMarketData = localStorage.getItem("marketData");
+    const cachedFearGreedData = localStorage.getItem("fearGreedData");
+    const cacheTimestamp = localStorage.getItem("cacheTimestamp");
+
+    if (cachedTrendingCoins && cachedTrendingDexscan && cachedMarketData && cachedFearGreedData && cacheTimestamp) {
+      const currentTime = Date.now();
+      const cacheExpiry = 5 * 60 * 1000; // 5 minutes
+
+      if (currentTime - parseInt(cacheTimestamp, 10) < cacheExpiry) {
+        setTrendingCoins(JSON.parse(cachedTrendingCoins));
+        setTrendingDexscan(JSON.parse(cachedTrendingDexscan));
+        setMarketData(JSON.parse(cachedMarketData));
+        setFearGreedData(JSON.parse(cachedFearGreedData));
+        setLoading(false);
+        return; // Use cached data and skip fetching
+      }
+    }
+  };
+
+  const fetchAllDataIfNeeded = async () => {
+    if (!marketData) {
+      await fetchAllData();
+    }
+  };
 
   const fetchAllData = async () => {
     await fetchTrendingCoins();
     await fetchMarketData();
     await fetchTrendingDexscan();
     await fetchFearGreedIndex();
+    localStorage.setItem("cacheTimestamp", Date.now().toString()); // Update cache timestamp
   };
 
   const fetchFearGreedIndex = async () => {
     try {
       const response = await axios.get("https://api.alternative.me/fng/");
-      setFearGreedData(response.data.data[0]); // Latest index value
+      setFearGreedData(response.data.data[0]);
+      localStorage.setItem("fearGreedData", JSON.stringify(response.data.data[0]));
     } catch (error) {
       console.error("❌ Error fetching Fear & Greed Index:", error.message);
     }
@@ -33,31 +64,27 @@ import axios from "axios";
 
   const fetchTrendingCoins = async (retryDelay = 30000) => {
     try {
-      const response = await axios.get(
-        "https://api.coingecko.com/api/v3/search/trending",
-        { headers: { "Cache-Control": "no-cache" } }
-      );
-      setTrendingCoins(response.data.coins.slice(0, 5));
+      const response = await axios.get("https://api.coingecko.com/api/v3/search/trending");
+      const coins = response.data.coins.slice(0, 5);
+      setTrendingCoins(coins);
+      localStorage.setItem("trendingCoins", JSON.stringify(coins));
     } catch (error) {
       console.error("❌ Error fetching trending coins:", error.message);
       if (error.response?.status === 429) {
-        console.warn(`⚠️ Rate limit hit! Retrying in ${retryDelay / 1000} seconds...`);
-        setTimeout(() => fetchTrendingCoins(retryDelay * 2), retryDelay); // Exponential backoff
+        setTimeout(() => fetchTrendingCoins(retryDelay * 2), retryDelay);
       }
     }
   };
 
   const fetchTrendingDexscan = async (retryDelay = 30000) => {
     try {
-      const response = await axios.get(
-        "https://api.coingecko.com/api/v3/search/trending",
-        { headers: { "Cache-Control": "no-cache" } }
-      );
-      setTrendingDexscan(response.data.coins.slice(6, 11));
+      const response = await axios.get("https://api.coingecko.com/api/v3/search/trending");
+      const dexscanCoins = response.data.coins.slice(6, 11);
+      setTrendingDexscan(dexscanCoins);
+      localStorage.setItem("trendingDexscan", JSON.stringify(dexscanCoins));
     } catch (error) {
       console.error("❌ Error fetching trending dexscan:", error.message);
       if (error.response?.status === 429) {
-        console.warn(`⚠️ Rate limit hit! Retrying in ${retryDelay / 1000} seconds...`);
         setTimeout(() => fetchTrendingDexscan(retryDelay * 2), retryDelay);
       }
     }
@@ -67,6 +94,7 @@ import axios from "axios";
     try {
       const response = await axios.get("https://api.coingecko.com/api/v3/global");
       setMarketData(response.data.data);
+      localStorage.setItem("marketData", JSON.stringify(response.data.data));
     } catch (error) {
       console.error("❌ Error fetching market data:", error.message);
     } finally {
