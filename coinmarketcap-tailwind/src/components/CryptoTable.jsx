@@ -36,7 +36,7 @@ export default function CryptoTable() {
   };
 
   return (
-    <div id="cryptotable" className="container mx-auto mt-3 xl:px-20">
+    <div id="cryptotable" className="container mx-auto xl:px-20">
       <div className="overflow-x-auto">
         <table className="min-w-full table-auto text-center text-white">
           <thead className="border-b">
