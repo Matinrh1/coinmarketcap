@@ -21,7 +21,7 @@ export default function CryptoFilters({ activeFilter, setActiveFilter, subFilter
         {mainFilters.map((filter, index) => (
           <button
             key={index}
-            className={`cursor-pointer hover:bg-yellow-400 hover:text-black  min-w-fit text-md px-3 py-1 ${activeFilter === filter ? "bg-yellow-500 text-black" : "bg-transparent border border-gray-400"} rounded-full`}
+            className={`cursor-pointer hover:bg-yellow-400 hover:text-black w-[120px] min-w-fit text-md px-3 py-1 ${activeFilter === filter ? "bg-yellow-500 text-black" : "bg-transparent border border-gray-400"} rounded-full`}
             onClick={() => setActiveFilter(filter)}
           >
             {filter}
@@ -33,7 +33,7 @@ export default function CryptoFilters({ activeFilter, setActiveFilter, subFilter
         {subFilters.map((filter, index) => (
           <button
             key={index}
-            className={`cursor-pointer hover:bg-yellow-400 hover:text-black min-w-fit text-md px-3 py-1 ${subFilter === filter ? "bg-yellow-500 text-black" : "bg-transparent border border-gray-400"} rounded-full`}
+            className={`cursor-pointer hover:bg-yellow-400 hover:text-black w-[100px] min-w-fit text-md px-3 py-1 ${subFilter === filter ? "bg-yellow-500 text-black" : "bg-transparent border border-gray-400"} rounded-full`}
             onClick={() => setSubFilter(filter)}
           >
             {filter}
