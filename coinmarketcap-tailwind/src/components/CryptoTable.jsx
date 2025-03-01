@@ -135,35 +135,87 @@ export default function CryptoTable() {
         </table>
       </div>
 
-      <div className="flex justify-center my-5">
+     <div className="flex justify-center my-5">
         <nav>
           <ul className="flex items-center space-x-2 bg-gray-900 p-2 rounded">
+            {/* Previous Button */}
             <li>
               <a
-                className="text-white px-4 py-2 rounded hover:bg-gray-600"
-                onClick={() => handlePageChange(currentPage - 1)}
+                className={`text-white px-4 py-2 rounded hover:bg-gray-600 ${
+                  currentPage === 1 ? "opacity-50 cursor-not-allowed" : ""
+                }`}
+                onClick={() => currentPage > 1 && handlePageChange(currentPage - 1)}
                 href="#cryptotable"
               >
                 &laquo;
               </a>
             </li>
-            {[1, 2, 3].map((pageNumber) => (
-              <li key={pageNumber}>
-                <a
-                  className={`text-white px-4 py-2 rounded hover:bg-gray-600 ${
-                    pageNumber === currentPage ? "bg-yellow-500" : ""
-                  }`}
-                  onClick={() => handlePageChange(pageNumber)}
-                  href="#cryptotable"
-                >
-                  {pageNumber}
-                </a>
-              </li>
-            ))}
+
+            {/* First Page Always Visible */}
             <li>
               <a
-                className="text-white px-4 py-2 rounded hover:bg-gray-600"
-                onClick={() => handlePageChange(currentPage + 1)}
+                className={`text-white px-4 py-2 rounded hover:bg-gray-600 ${
+                  currentPage === 1 ? "bg-yellow-500" : ""
+                }`}
+                onClick={() => handlePageChange(1)}
+                href="#cryptotable"
+              >
+                1
+              </a>
+            </li>
+
+            {/* Ellipsis Before Middle Pages */}
+            {currentPage > 4 && <li className="text-white px-2">...</li>}
+
+            {/* Dynamic Middle Pages */}
+            {(() => {
+              const pages = [];
+              const totalPages = 217; // Adjust if needed
+              let startPage = Math.max(2, currentPage - 2);
+              let endPage = Math.min(totalPages - 1, currentPage + 2);
+
+              for (let i = startPage; i <= endPage; i++) {
+                pages.push(i);
+              }
+
+              return pages.map((pageNumber) => (
+                <li key={pageNumber}>
+                  <a
+                    className={`text-white px-4 py-2 rounded hover:bg-gray-600 ${
+                      pageNumber === currentPage ? "bg-yellow-500" : ""
+                    }`}
+                    onClick={() => handlePageChange(pageNumber)}
+                    href="#cryptotable"
+                  >
+                    {pageNumber}
+                  </a>
+                </li>
+              ));
+            })()}
+
+            {/* Ellipsis After Middle Pages */}
+            {currentPage < 214 && <li className="text-white px-2">...</li>}
+
+            {/* Last Page Always Visible */}
+            <li>
+              <a
+                className={`text-white px-4 py-2 rounded hover:bg-gray-600 ${
+                  currentPage === 217 ? "bg-yellow-500" : ""
+                }`}
+                onClick={() => handlePageChange(217)}
+                href="#cryptotable"
+              >
+                217
+              </a>
+            </li>
+
+            {/* Next Button */}
+            <li>
+              <a
+                className={`text-white px-4 py-2 rounded hover:bg-gray-600 ${
+                  currentPage === 217 ? "opacity-50 cursor-not-allowed" : ""
+                }`}
+                onClick={() => currentPage < 217 && handlePageChange(currentPage + 1)}
                 href="#cryptotable"
               >
                 &raquo;
